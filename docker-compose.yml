@@ -1,0 +1,55 @@
+version: '3'
+services:
+    app:
+        container_name: goalng_app
+        build: .
+        ports:
+            - 8080:8080
+        restart: on-failure
+        volumes:
+            - api:/usr/src/app/
+        depends_on:
+            - mysql
+        networks:
+            - appnet
+
+    mysql:
+      image: mysql:5.7
+      container_name: mysql
+      ports: 
+        - 3306:3306
+      environment: 
+        - MYSQL_ROOT_HOST=${DB_HOST} 
+        - MYSQL_USER=${DB_USER}
+        - MYSQL_PASSWORD=${DB_PASSWORD}
+        - MYSQL_DATABASE=${DB_NAME}
+        - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      volumes:
+        - database_mysql:/var/lib/mysql
+      networks:
+        - appnet
+
+    phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      container_name: phpmyadmin
+      depends_on:
+        - mysql
+      environment:
+        - PMA_HOST=mysql
+        - PMA_USER=${DB_USER}
+        - PMA_PORT=${DB_PORT}
+        - PMA_PASSWORD=${DB_PASSWORD}
+      ports:
+        - 9090:80
+      restart: always
+      networks:
+        - appnet
+
+volumes:
+    api:
+    database_mysql:
+
+# Networks for communication between containers
+networks:
+    appnet:
+        driver: bridge
