@@ -33,6 +33,8 @@ func SetupRouter() *gin.Engine {
 
 	router := gin.Default()
 
+	router.MaxMultipartMemory = 8 << 20
+
 	gin.SetMode(gin.DebugMode)
 
 	// load routes

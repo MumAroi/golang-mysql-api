@@ -8,15 +8,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type repository struct {
+type service struct {
 	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) *repository {
-	return &repository{db: db}
+func NewService(db *gorm.DB) *service {
+	return &service{db: db}
 }
 
-func (r *repository) CreateUser(c *gin.Context) {
+func (r *service) CreateUser(c *gin.Context) {
 
 	var user models.User
 
@@ -24,6 +24,15 @@ func (r *repository) CreateUser(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	user.Prepare()
+
+	if err := user.Validate(""); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"error": err.Error(),
 		})
 		return

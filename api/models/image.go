@@ -10,9 +10,9 @@ import (
 )
 
 type Image struct {
-	ID        uint64 `gorm:"primary_key;auto_increment" json:"id"`
-	Title     string `gorm:"type:varchar(255);not null;unique" json:"title"`
-	Image     string `gorm:"type:text;not null" json:"image"`
+	ID        uint64 `gorm:"primary_key;auto_increment" form:"id"`
+	Title     string `gorm:"type:varchar(255);not null;unique" form:"title"`
+	Url       string `gorm:"type:text;not null" form:"url"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -20,7 +20,7 @@ type Image struct {
 func (i *Image) Prepare() {
 	i.ID = 0
 	i.Title = html.EscapeString(strings.TrimSpace(i.Title))
-	i.Image = html.EscapeString(strings.TrimSpace(i.Image))
+	i.Url = html.EscapeString(strings.TrimSpace(i.Url))
 	i.CreatedAt = time.Now()
 	i.UpdatedAt = time.Now()
 }
@@ -30,8 +30,8 @@ func (i *Image) Validate() error {
 	if i.Title == "" {
 		return errors.New("Required Title")
 	}
-	if i.Image == "" {
-		return errors.New("Required Image")
+	if i.Url == "" {
+		return errors.New("Required Url")
 	}
 	return nil
 }
@@ -71,7 +71,7 @@ func (i *Image) UpdateAImage(db *gorm.DB, pid uint64) (*Image, error) {
 	db = db.Debug().Model(&Image{}).Where("id = ?", pid).Take(&Image{}).UpdateColumns(
 		map[string]interface{}{
 			"title":      i.Title,
-			"image":      i.Image,
+			"url":        i.Url,
 			"updated_at": time.Now(),
 		},
 	)
