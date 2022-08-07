@@ -9,6 +9,7 @@ import (
 	authController "github.com/MumAroi/golang-mysql-api/api/controllers/auth-controller"
 	imageController "github.com/MumAroi/golang-mysql-api/api/controllers/image-controller"
 	userController "github.com/MumAroi/golang-mysql-api/api/controllers/user-controller"
+	middleware "github.com/MumAroi/golang-mysql-api/api/middlewares"
 )
 
 func InitializeRoutes(db *gorm.DB, route *gin.Engine) {
@@ -25,17 +26,21 @@ func InitializeRoutes(db *gorm.DB, route *gin.Engine) {
 
 	route.POST("/login", authC.Login)
 
-	route.POST("/users", userC.CreateUser)
+	protected := route.Group("/", middleware.AuthorizationMiddleware)
 
-	route.GET("/images", imageC.GetImages)
+	protected.GET("/users", userC.GetUsers)
 
-	route.POST("/images", imageC.CreateImage)
+	protected.POST("/users", userC.CreateUser)
 
-	route.DELETE("/images/:id", imageC.DeleteImage)
+	protected.GET("/images", imageC.GetImages)
 
-	route.PUT("/images/:id", imageC.UpdateImage)
+	protected.POST("/images", imageC.CreateImage)
 
-	route.GET("/images/:name", func(c *gin.Context) {
+	protected.DELETE("/images/:id", imageC.DeleteImage)
+
+	protected.PUT("/images/:id", imageC.UpdateImage)
+
+	protected.GET("/images/:name", func(c *gin.Context) {
 		name := c.Param("name")
 		c.File("upload/" + name)
 	})

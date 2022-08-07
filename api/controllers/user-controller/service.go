@@ -47,3 +47,20 @@ func (s *service) CreateUser(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, user)
 }
+
+func (s *service) GetUsers(c *gin.Context) {
+
+	var user models.User
+
+	users, err := user.FindAllUsers(s.db)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"messs": "Can not get users",
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, users)
+
+}
