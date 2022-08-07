@@ -14,6 +14,7 @@ import (
 
 func InitializeRoutes(db *gorm.DB, route *gin.Engine) {
 
+	// set route controller
 	authC := authController.NewService(db)
 	userC := userController.NewService(db)
 	imageC := imageController.NewService(db)
@@ -26,6 +27,7 @@ func InitializeRoutes(db *gorm.DB, route *gin.Engine) {
 
 	route.POST("/login", authC.Login)
 
+	// sest middleware
 	protected := route.Group("/", middleware.AuthorizationMiddleware)
 
 	protected.GET("/users", userC.GetUsers)

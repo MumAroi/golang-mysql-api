@@ -11,6 +11,12 @@ docker-compose down --remove-orphans --volumes
 docker-compose up --build -d
 ```
 
+## API listening port
+
+```
+http://localhost:8080
+```
+
 ## Postman json link
 
 ```

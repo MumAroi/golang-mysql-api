@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/MumAroi/golang-mysql-api/api/models"
+	"github.com/MumAroi/golang-mysql-api/api/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -62,7 +63,7 @@ func (s *service) CreateImage(c *gin.Context) {
 		return
 	}
 
-	imageURL := "http://localhost:8080/images/" + newFileName
+	imageURL := "http://localhost:" + utils.GodotEnv("GO_PORT") + "/images/" + newFileName
 
 	c.Bind(&image)
 

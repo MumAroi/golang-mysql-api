@@ -18,7 +18,7 @@ func init() {
 }
 
 func Run() {
-	//  set up route
+	// set up route
 	router := SetupRouter()
 
 	// start server

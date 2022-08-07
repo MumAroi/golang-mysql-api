@@ -27,8 +27,10 @@ func Connection() *gorm.DB {
 
 	logrus.Info("Connection to Database Successfully")
 
+	// migrate table
 	db.AutoMigrate(&models.User{}, &models.Image{})
 
+	// seed data
 	seeds.Load(db)
 
 	if err != nil {
