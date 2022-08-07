@@ -10,7 +10,7 @@ import (
 var users = []models.User{
 	models.User{
 		Nickname: "Paramas Waewsuwan",
-		Email:    "paramas.wae.th@gmail.com",
+		Email:    "paramas.test@gmail.com",
 		Password: "123456",
 	},
 }
