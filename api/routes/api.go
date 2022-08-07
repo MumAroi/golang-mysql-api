@@ -27,7 +27,13 @@ func InitializeRoutes(db *gorm.DB, route *gin.Engine) {
 
 	route.POST("/users", userC.CreateUser)
 
+	route.GET("/images", imageC.GetImages)
+
 	route.POST("/images", imageC.CreateImage)
+
+	route.DELETE("/images/:id", imageC.DeleteImage)
+
+	route.PUT("/images/:id", imageC.UpdateImage)
 
 	route.GET("/images/:name", func(c *gin.Context) {
 		name := c.Param("name")

@@ -11,7 +11,7 @@ import (
 
 type Image struct {
 	ID        uint64 `gorm:"primary_key;auto_increment" form:"id"`
-	Title     string `gorm:"type:varchar(255);not null;unique" form:"title"`
+	Name      string `gorm:"type:varchar(255);not null" form:"name"`
 	Url       string `gorm:"type:text;not null" form:"url"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -19,21 +19,28 @@ type Image struct {
 
 func (i *Image) Prepare() {
 	i.ID = 0
-	i.Title = html.EscapeString(strings.TrimSpace(i.Title))
+	i.Name = html.EscapeString(strings.TrimSpace(i.Name))
 	i.Url = html.EscapeString(strings.TrimSpace(i.Url))
 	i.CreatedAt = time.Now()
 	i.UpdatedAt = time.Now()
 }
 
-func (i *Image) Validate() error {
-
-	if i.Title == "" {
-		return errors.New("Required Title")
+func (i *Image) Validate(action string) error {
+	switch strings.ToLower(action) {
+	case "update":
+		if i.Name == "" {
+			return errors.New("Required Name")
+		}
+		return nil
+	default:
+		if i.Name == "" {
+			return errors.New("Required Name")
+		}
+		if i.Url == "" {
+			return errors.New("Required Url")
+		}
+		return nil
 	}
-	if i.Url == "" {
-		return errors.New("Required Url")
-	}
-	return nil
 }
 
 func (i *Image) SaveImage(db *gorm.DB) (*Image, error) {
@@ -65,13 +72,12 @@ func (i *Image) FindImageByID(db *gorm.DB, pid uint64) (*Image, error) {
 	return i, nil
 }
 
-func (i *Image) UpdateAImage(db *gorm.DB, pid uint64) (*Image, error) {
+func (i *Image) UpdateImage(db *gorm.DB, pid uint64) (*Image, error) {
 
 	var err error
 	db = db.Debug().Model(&Image{}).Where("id = ?", pid).Take(&Image{}).UpdateColumns(
 		map[string]interface{}{
-			"title":      i.Title,
-			"url":        i.Url,
+			"name":       i.Name,
 			"updated_at": time.Now(),
 		},
 	)
@@ -82,7 +88,7 @@ func (i *Image) UpdateAImage(db *gorm.DB, pid uint64) (*Image, error) {
 	return i, nil
 }
 
-func (i *Image) DeleteAImage(db *gorm.DB, pid uint64) (int64, error) {
+func (i *Image) DeleteImage(db *gorm.DB, pid uint64) (int64, error) {
 
 	var err error
 

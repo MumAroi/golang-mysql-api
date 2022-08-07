@@ -16,11 +16,11 @@ func NewService(db *gorm.DB) *service {
 	return &service{db: db}
 }
 
-func (r *service) CreateUser(c *gin.Context) {
+func (s *service) CreateUser(c *gin.Context) {
 
 	var user models.User
 
-	db := r.db.Model(&user)
+	db := s.db.Model(&user)
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
